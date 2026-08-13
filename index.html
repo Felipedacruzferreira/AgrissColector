@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mapa — pontos coletados</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="toolbar">
+    <div class="brand">
+      <strong>Coletor de mapa</strong>
+      <span id="count">0 marcados</span>
+    </div>
+    <div class="actions">
+      <label class="mode">
+        <input type="radio" name="mode" value="mark" checked />
+        Marcar
+      </label>
+      <label class="mode">
+        <input type="radio" name="mode" value="erase" />
+        Apagar
+      </label>
+      <button type="button" id="btnZoomOut" title="Zoom −">−</button>
+      <button type="button" id="btnZoomIn" title="Zoom +">+</button>
+      <button type="button" id="btnResetView" title="Resetar visão">Reset visão</button>
+      <button type="button" id="btnClear" class="danger" title="Apagar todos os pontos salvos">Limpar tudo</button>
+    </div>
+  </header>
+
+  <main class="viewport" id="viewport">
+    <div class="stage" id="stage">
+      <img src="map.png" alt="Mapa do jogo" id="map" draggable="false" />
+      <div id="markers" aria-live="polite"></div>
+    </div>
+  </main>
+
+  <p class="hint">
+    Modo <b>Marcar</b>: clique no ponto do mapa. Modo <b>Apagar</b>: clique no check para remover.
+    Arraste para mover · scroll para zoom · salvo no localStorage.
+  </p>
+
+  <script src="app.js"></script>
+</body>
+</html>
