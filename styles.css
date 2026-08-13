@@ -133,21 +133,22 @@ button.danger:hover {
 
 .marker {
   position: absolute;
-  width: 9px;
-  height: 9px;
-  margin: -4.5px 0 0 -4.5px;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
   border-radius: 50%;
-  border: 1.5px solid #f8fafc;
+  border: 1px solid #f8fafc;
   background: var(--mark);
-  box-shadow: 0 0 0 2px var(--mark-ring), 0 1px 3px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 0 0 1px var(--mark-ring);
   pointer-events: auto;
   cursor: pointer;
-  transition: transform 0.12s ease;
+  transform-origin: center center;
+  z-index: 1;
 }
 
 .marker:hover {
-  transform: scale(1.45);
   z-index: 2;
+  filter: brightness(1.15);
 }
 
 .hint {

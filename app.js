@@ -1,6 +1,6 @@
 (() => {
   const STORAGE_KEY = "tl-map-collector:v1";
-  const NEAR_PX = 10;
+  const NEAR_PX = 12; /* screen px — hit area, marker visual is smaller */
 
   const viewport = document.getElementById("viewport");
   const stage = document.getElementById("stage");
@@ -41,19 +41,30 @@
     return document.querySelector('input[name="mode"]:checked')?.value || "mark";
   }
 
+  function markerScreenScale() {
+    // Keep markers ~constant size on screen while the map zooms.
+    return 1 / Math.max(scale, 0.01);
+  }
+
   function applyTransform() {
     stage.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
     viewport.classList.toggle("mode-mark", mode() === "mark" && !dragging);
+    const inv = markerScreenScale();
+    for (const el of markersEl.querySelectorAll(".marker")) {
+      el.style.transform = `scale(${inv})`;
+    }
   }
 
   function render() {
     markersEl.innerHTML = "";
+    const inv = markerScreenScale();
     for (const m of marks) {
       const el = document.createElement("button");
       el.type = "button";
       el.className = "marker";
       el.style.left = `${m.x}%`;
       el.style.top = `${m.y}%`;
+      el.style.transform = `scale(${inv})`;
       el.title = `Coletado (${m.x.toFixed(1)}%, ${m.y.toFixed(1)}%)`;
       el.dataset.id = m.id;
       el.addEventListener("click", (e) => {
@@ -90,7 +101,7 @@
     let bestD = Infinity;
     for (const m of marks) {
       const d = distPx(m, percent, rect);
-      if (d < NEAR_PX * scale && d < bestD) {
+      if (d < NEAR_PX && d < bestD) {
         best = m;
         bestD = d;
       }
