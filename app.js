@@ -1,7 +1,6 @@
 (() => {
   const STORAGE_KEY = "tl-map-collector:v1";
-  const NEAR_PX = 8; /* screen px — toggle/remove only when really close */
-  const MARKER_SIZE = 5;
+  const NEAR_PX = 10; /* screen px */
 
   const viewport = document.getElementById("viewport");
   const stage = document.getElementById("stage");
@@ -42,26 +41,9 @@
     return document.querySelector('input[name="mode"]:checked')?.value || "mark";
   }
 
-  function markerScreenScale() {
-    // Keep markers ~constant size on screen while the map zooms.
-    return 1 / Math.max(scale, 0.01);
-  }
-
-  /** Anchor marker so its visual center sits exactly on (x%, y%). */
-  function placeMarkerEl(el, xPct, yPct) {
-    const inv = markerScreenScale();
-    const half = (MARKER_SIZE * inv) / 2;
-    el.style.left = `calc(${xPct}% - ${half}px)`;
-    el.style.top = `calc(${yPct}% - ${half}px)`;
-    el.style.transform = `scale(${inv})`;
-  }
-
   function applyTransform() {
     stage.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
     viewport.classList.toggle("mode-mark", mode() === "mark" && !dragging);
-    for (const el of markersEl.querySelectorAll(".marker")) {
-      placeMarkerEl(el, Number(el.dataset.x), Number(el.dataset.y));
-    }
   }
 
   function render() {
@@ -70,11 +52,12 @@
       const el = document.createElement("button");
       el.type = "button";
       el.className = "marker";
+      el.style.left = `${m.x}%`;
+      el.style.top = `${m.y}%`;
       el.dataset.id = m.id;
       el.dataset.x = String(m.x);
       el.dataset.y = String(m.y);
       el.title = `Coletado (${m.x.toFixed(1)}%, ${m.y.toFixed(1)}%)`;
-      placeMarkerEl(el, m.x, m.y);
       el.addEventListener("click", (e) => {
         e.stopPropagation();
         if (mode() === "erase") {

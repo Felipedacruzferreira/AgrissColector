@@ -6,7 +6,8 @@
   --accent: #3d9a6a;
   --danger: #c44b4b;
   --mark: #22c55e;
-  --mark-ring: rgba(34, 197, 94, 0.35);
+  /* ~same diameter as the colored dots painted on map.png (1024px wide) */
+  --marker-size: 10px;
 }
 
 * {
@@ -134,25 +135,24 @@ button.danger:hover {
 .marker {
   position: absolute;
   box-sizing: border-box;
-  width: 5px;
-  height: 5px;
+  width: var(--marker-size);
+  height: var(--marker-size);
   margin: 0;
   padding: 0;
-  left: 0;
-  top: 0;
   border-radius: 50%;
-  border: 1px solid #f8fafc;
+  border: 1.5px solid #f8fafc;
   background: var(--mark);
-  box-shadow: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
   pointer-events: auto;
   cursor: pointer;
-  transform-origin: 0 0;
   z-index: 1;
   appearance: none;
   -webkit-appearance: none;
   font-size: 0;
   line-height: 0;
   overflow: hidden;
+  /* center on the click point */
+  transform: translate(-50%, -50%);
 }
 
 .marker:hover {
