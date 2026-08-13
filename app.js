@@ -1,6 +1,7 @@
 (() => {
   const STORAGE_KEY = "tl-map-collector:v1";
-  const NEAR_PX = 12; /* screen px — hit area, marker visual is smaller */
+  const NEAR_PX = 8; /* screen px — toggle/remove only when really close */
+  const MARKER_SIZE = 5;
 
   const viewport = document.getElementById("viewport");
   const stage = document.getElementById("stage");
@@ -46,27 +47,34 @@
     return 1 / Math.max(scale, 0.01);
   }
 
+  /** Anchor marker so its visual center sits exactly on (x%, y%). */
+  function placeMarkerEl(el, xPct, yPct) {
+    const inv = markerScreenScale();
+    const half = (MARKER_SIZE * inv) / 2;
+    el.style.left = `calc(${xPct}% - ${half}px)`;
+    el.style.top = `calc(${yPct}% - ${half}px)`;
+    el.style.transform = `scale(${inv})`;
+  }
+
   function applyTransform() {
     stage.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
     viewport.classList.toggle("mode-mark", mode() === "mark" && !dragging);
-    const inv = markerScreenScale();
     for (const el of markersEl.querySelectorAll(".marker")) {
-      el.style.transform = `scale(${inv})`;
+      placeMarkerEl(el, Number(el.dataset.x), Number(el.dataset.y));
     }
   }
 
   function render() {
     markersEl.innerHTML = "";
-    const inv = markerScreenScale();
     for (const m of marks) {
       const el = document.createElement("button");
       el.type = "button";
       el.className = "marker";
-      el.style.left = `${m.x}%`;
-      el.style.top = `${m.y}%`;
-      el.style.transform = `scale(${inv})`;
-      el.title = `Coletado (${m.x.toFixed(1)}%, ${m.y.toFixed(1)}%)`;
       el.dataset.id = m.id;
+      el.dataset.x = String(m.x);
+      el.dataset.y = String(m.y);
+      el.title = `Coletado (${m.x.toFixed(1)}%, ${m.y.toFixed(1)}%)`;
+      placeMarkerEl(el, m.x, m.y);
       el.addEventListener("click", (e) => {
         e.stopPropagation();
         if (mode() === "erase") {
@@ -82,9 +90,13 @@
 
   function clientToPercent(clientX, clientY) {
     const rect = map.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return { x: 0, y: 0 };
     const x = ((clientX - rect.left) / rect.width) * 100;
     const y = ((clientY - rect.top) / rect.height) * 100;
-    return { x, y };
+    return {
+      x: Math.round(x * 10000) / 10000,
+      y: Math.round(y * 10000) / 10000,
+    };
   }
 
   function distPx(a, b, mapRect) {
@@ -128,8 +140,8 @@
     } else {
       marks.push({
         id: crypto.randomUUID(),
-        x: Math.round(p.x * 1000) / 1000,
-        y: Math.round(p.y * 1000) / 1000,
+        x: p.x,
+        y: p.y,
       });
     }
     save();

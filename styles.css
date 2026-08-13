@@ -68,7 +68,7 @@ body {
   background: rgba(61, 154, 106, 0.15);
 }
 
-button {
+button:not(.marker) {
   appearance: none;
   border: 1px solid #334155;
   background: #243041;
@@ -79,7 +79,7 @@ button {
   font: inherit;
 }
 
-button:hover {
+button:not(.marker):hover {
   background: #2d3c51;
 }
 
@@ -133,17 +133,26 @@ button.danger:hover {
 
 .marker {
   position: absolute;
+  box-sizing: border-box;
   width: 5px;
   height: 5px;
-  margin: -2.5px 0 0 -2.5px;
+  margin: 0;
+  padding: 0;
+  left: 0;
+  top: 0;
   border-radius: 50%;
   border: 1px solid #f8fafc;
   background: var(--mark);
-  box-shadow: 0 0 0 1px var(--mark-ring);
+  box-shadow: none;
   pointer-events: auto;
   cursor: pointer;
-  transform-origin: center center;
+  transform-origin: 0 0;
   z-index: 1;
+  appearance: none;
+  -webkit-appearance: none;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 
 .marker:hover {
